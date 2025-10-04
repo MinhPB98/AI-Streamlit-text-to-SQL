@@ -2,11 +2,26 @@ import streamlit as st
 from openai import OpenAI
 import os
 
+# Resolve API key from env or Streamlit secrets, fail gracefully if missing
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key and "OPENAI_API_KEY" in st.secrets:
+    api_key = st.secrets["OPENAI_API_KEY"]
+if not api_key:
+    st.error(
+        "Missing OPENAI_API_KEY. Set it as an environment variable or add it to Streamlit secrets."
+    )
+    st.stop()
+
 # Init OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", st.secrets["OPENAI_API_KEY"]))
+client = OpenAI(api_key=api_key)
 
 # Use the Assistant you already created (with vector store attached)
-ASSISTANT_ID = "asst_cluFh3dbHS6ynCg547O7e0XM"  # replace with your assistant_id
+# Prefer env/secrets if provided; fallback to hardcoded value
+ASSISTANT_ID = os.getenv("ASSISTANT_ID")
+if not ASSISTANT_ID and "ASSISTANT_ID" in st.secrets:
+    ASSISTANT_ID = st.secrets["ASSISTANT_ID"]
+if not ASSISTANT_ID:
+    ASSISTANT_ID = "asst_cluFh3dbHS6ynCg547O7e0XM"  # replace with your assistant_id
 
 # Keep one thread per user session
 if "thread_id" not in st.session_state:
