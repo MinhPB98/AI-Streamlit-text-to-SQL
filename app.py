@@ -32,6 +32,7 @@ st.title("💬 AI SQL Writer Assistant")
 st.caption("Uses OpenAI Assistants API + your vector store")
 
 # Display past messages
+print("Session state: ", st.session_state)
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
